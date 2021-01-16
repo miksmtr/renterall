@@ -1,52 +1,43 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
+import 'package:dio/dio.dart';
 import 'package:renterall/utills/exceptions/http_not_found_exception.dart';
 import 'package:renterall/utills/exceptions/http_unauthorized_exception.dart';
 import 'package:renterall/utills/exceptions/http_unprocessable_entity_exception.dart';
 
 class ApiHelper {
-  /*
-
-  headers = {
-      HttpHeaders.acceptHeader: 'application/json',
-      HttpHeaders.contentTypeHeader: 'application/json',
-      HttpHeaders.authorizationHeader: 'Bearer ' + userToken,
-    };
-  */
   String baseUrl;
   bool debug = true;
-  HttpClient _httpClient;
-  IOClient _ioClient;
-  String userToken;
-
-  Map<String, String> headers;
-
-  ApiHelper({this.baseUrl, this.userToken, this.headers}) {
-    HttpClient _httpClient = new HttpClient()
-      ..badCertificateCallback =
-          ((X509Certificate cert, String host, int port) => true);
-    _ioClient = new IOClient(_httpClient);
-  }
-
-  Future<http.Response> getApi(url) async {
-    if (userToken == null) {
-      userToken = '';
+  Dio dio;
+  bool isFormData = false;
+  String token;
+  bool trustSelfSignedCertificate = true;
+  BaseOptions options;
+  ApiHelper({this.baseUrl, this.token, this.isFormData = false}) {
+    if (isFormData) {
+      dio = new Dio(BaseOptions(
+        contentType: Headers.formUrlEncodedContentType,
+        validateStatus: (_) => true,
+      ));
+    } else {
+      dio = new Dio();
     }
-    return _handleResponse(await _ioClient.get(baseUrl + url, headers: headers));
+    dio.options.headers['Authorization'] = token;
   }
 
-  Future<http.Response> postApi(url, {body, Encoding encoding}) async {
-    if (userToken == null) {
-      userToken = '';
-    }
-
-    return _handleResponse(await _ioClient.post(baseUrl + url,
-        headers: headers, body: body, encoding: encoding));
+  Future<dynamic> getApi(url) async {
+    Response response = await _handleResponse(await dio.get(baseUrl + url));
+    return response.data;
   }
 
-  Future<http.Response> _handleResponse(http.Response response) async {
+  Future<dynamic> postApi(url, body) async {
+    Response response = await _handleResponse(await dio.post(
+      url,
+      data: body,
+    ));
+    return response.data;
+  }
+
+  Future<Response> _handleResponse(Response response) async {
     if (debug) {
       print('HTTP STATUS CODE ' + response.statusCode.toString());
     }
@@ -57,14 +48,13 @@ class ApiHelper {
         return response;
         break;
       case 422:
-        throw HttpUnprocessableEntityException(
-            message: jsonDecode(response.body));
+        throw HttpUnprocessableEntityException(message: response.data);
         break;
       case 404:
-        throw HttpNotFoundException(message: jsonDecode(response.body));
+        throw HttpNotFoundException(message: jsonDecode(response.data));
         break;
       case 401:
-        dynamic resultData = jsonDecode(response.body);
+        dynamic resultData = response.data;
         throw HttpUnauthorizedException(message: resultData);
         break;
       default:
