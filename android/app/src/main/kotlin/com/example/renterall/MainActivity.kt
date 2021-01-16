@@ -1,4 +1,4 @@
-package com.renterall.app".renterall
+package com.renterall.app
 
 import io.flutter.embedding.android.FlutterActivity
 

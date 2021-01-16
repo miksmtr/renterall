@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:renterall/models/palm/area.dart';
+
+import 'models/interfaces/model_interfac.dart';
+import 'models/palm/config.dart';
 
 void main() {
+
   runApp(MyApp());
 }
 
