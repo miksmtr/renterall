@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:renterall/general_const.dart';
-import 'package:renterall/operators/scooter/dost/api/api.dart';
-import 'package:renterall/operators/scooter/marti/api/api.dart';
-
+import 'operators/scooter/biri/api/api.dart';
+import 'operators/scooter/dost/api/api.dart';
+import 'operators/scooter/marti/api/api.dart';
 import 'operators/scooter/palm/api/api.dart';
 
 const PALMTOKEN =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMjg2NDZ9LCJpYXQiOjE2MTA3NDUwOTcsImV4cCI6MTYxMDgzMTQ5N30.DcF_DRedhsjZmx733VqMiHJZ1t37KR86a9SEFqOBxt0";
 
-const MARTITOKEN = "43cabec6-8c2f-4246-881d-b269c0df90b2";
+const MARTITOKEN = "710218c2-81c9-430f-bee5-5bba94ce0a8d";
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
@@ -46,22 +47,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   init() async {
     var list;
-/*     PalmApi palmApi = new PalmApi(PALMTOKEN);
+
+    PalmApi palmApi = new PalmApi(PALMTOKEN);
     list = await palmApi.getScooters();
     for (var item in list) {
       print("palm scooter code:  " + item.qrcode.toString());
-    } 
-  
-  */
-
-/*     MartiApi martiApi = new MartiApi(MARTITOKEN);
-    list = await martiApi.getScooters();
-    for (var item in list) {
-      print(" marti scooter code:  " + item.qrcode.toString());
-    } */
+    }
 
     DostApi dostApi = new DostApi(DOSTTOKEN);
     list = await dostApi.getScooters(41.04411399, 29.00307961);
+
+/*     BiriApi dostApi = new BiriApi(BIRITOKEN);
+    var list = await dostApi.getScooters(); */
   }
 
   @override

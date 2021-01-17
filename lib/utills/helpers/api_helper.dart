@@ -12,16 +12,26 @@ class ApiHelper {
   String token;
   bool trustSelfSignedCertificate = true;
   BaseOptions options;
-  ApiHelper({this.baseUrl, this.token, this.isFormData = false}) {
+  bool xAccessToken;
+  ApiHelper(
+      {this.baseUrl,
+      this.token,
+      this.isFormData = false,
+      this.xAccessToken = false}) {
     if (isFormData) {
       dio = new Dio(BaseOptions(
+        responseType: ResponseType.json,
         contentType: Headers.formUrlEncodedContentType,
         validateStatus: (_) => true,
       ));
     } else {
       dio = new Dio();
     }
-    dio.options.headers['Authorization'] = token;
+    if (xAccessToken) {
+      dio.options.headers['x-access-token'] = token;
+    } else {
+      dio.options.headers['Authorization'] = token;
+    }
   }
 
   Future<dynamic> getApi(url) async {
