@@ -24,7 +24,6 @@ class HopApi implements ApiInterface {
     List<Scooter> list = new List<Scooter>();
     var json = await apiHelper
         .getApi('scooters:nearby?lat=$latitude&lng=$longitude&r=10000');
-    print("json: " + json.toString());
     for (var item in jsonDecode(json)) {
       Scooter scotter = new Scooter(
         code: item['code'],

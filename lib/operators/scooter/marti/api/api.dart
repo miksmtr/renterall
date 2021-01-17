@@ -25,7 +25,6 @@ class MartiApi implements ApiInterface {
     var json = await apiHelper.postApi('map/listAvailables',
         body:
             '{"latitude": "$latitude,"longitude": "$longitude","minPointLatitude": "$minPointLatitude","minPointLongitude": "$minPointLongitude","maxPointLatitude": "$maxPointLatitude","maxPointLongitude": "$maxPointLongitude","zoomLevel": "$zoomLevel}');
-    print("json: " + json.toString());
     for (var item in json['data']) {
       list.add(Scooter.fromJson(item));
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:renterall/general_const.dart';
-import 'package:renterall/operators/scooter/hop/api/api.dart';
+
+import 'operators/scooter/mobi/api/api.dart';
 
 void main() async {
   runApp(MyApp());
@@ -38,6 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   init() async {
     var list;
+    MobiApi mobiApi = new MobiApi(MOBITOKEN);
+    list = await mobiApi.getScooters();
+    for (var item in list) {
+      print("mobiApi scooter code:  " + item.battery.toString());
+    }
 
 /*     HopApi hopApi = new HopApi(HOPTOKEN);
     list = await hopApi.getScooters("39.9207225", "32.851652");
