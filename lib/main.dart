@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:renterall/general_const.dart';
 
+import 'operators/scooter/kedi/api/api.dart';
 import 'operators/scooter/mobi/api/api.dart';
 
 void main() async {
@@ -39,10 +40,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   init() async {
     var list;
-    MobiApi mobiApi = new MobiApi(MOBITOKEN);
-    list = await mobiApi.getScooters();
+    KediApi kediApi = new KediApi(KEDITOKEN);
+    list = await kediApi.getScooters();
     for (var item in list) {
-      print("mobiApi scooter code:  " + item.battery.toString());
+      print("kediApi scooter code:  " + item.imei.toString());
     }
 
 /*     HopApi hopApi = new HopApi(HOPTOKEN);

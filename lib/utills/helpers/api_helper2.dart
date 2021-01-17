@@ -31,7 +31,7 @@ class ApiHelper2 {
 
   Future<dynamic> postApi(url, {body}) async {
     var request = http.Request('POST', Uri.parse(baseUrl + url));
-    request.body = body;
+    if (body != null) request.body = body;
 
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
