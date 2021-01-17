@@ -20,13 +20,18 @@ class MartiApi implements ApiInterface {
       String minPointLongitude,
       String maxPointLatitude,
       String maxPointLongitude,
-      double zoomLevel = 14.0}) async {
+      String zoomLevel = "14.0"}) async {
     List<Scooter> list = new List<Scooter>();
+
     var json = await apiHelper.postApi('map/listAvailables',
         body:
-            '{"latitude": "$latitude,"longitude": "$longitude","minPointLatitude": "$minPointLatitude","minPointLongitude": "$minPointLongitude","maxPointLatitude": "$maxPointLatitude","maxPointLongitude": "$maxPointLongitude","zoomLevel": "$zoomLevel}');
-    for (var item in json['data']) {
-      list.add(Scooter.fromJson(item));
+            '''{"latitude":"$latitude","longitude":"$longitude","minPointLatitude":"$minPointLatitude","minPointLongitude":"$minPointLongitude","maxPointLatitude":"$maxPointLatitude","maxPointLongitude":"$maxPointLongitude","zoomLevel":"$zoomLevel"}''');
+    if (json['isSuccess']) {
+      if (json.length > 0) {
+        for (var item in json['data']) {
+          list.add(Scooter.fromJson(item));
+        }
+      }
     }
     return list;
   }

@@ -3,14 +3,15 @@ import 'dart:io';
 import 'package:renterall/models/interfaces/model_interfac.dart';
 
 class Vehicle implements ModelInterface {
-  String company; 
+  String company;
   String type; // scooter,car,taxi
 
   dynamic battery;
   dynamic distance;
-  dynamic duration;
   dynamic latitude;
   dynamic longitude;
+
+  dynamic duration;
   dynamic price;
   dynamic status;
   Vehicle(
@@ -20,7 +21,9 @@ class Vehicle implements ModelInterface {
       this.latitude,
       this.longitude,
       this.price,
-      this.status});
+      this.status,
+      this.company,
+      this.type});
 
   factory Vehicle.fromJson(Map json) {
     return Vehicle(
@@ -31,6 +34,8 @@ class Vehicle implements ModelInterface {
       longitude: json['longitude'] ?? null,
       price: json['price'] ?? null,
       status: json['status'] ?? null,
+      company: json['company'] ?? null,
+      type: json['type'] ?? null,
     );
   }
 }

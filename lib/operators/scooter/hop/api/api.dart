@@ -23,20 +23,23 @@ class HopApi implements ApiInterface {
   ) async {
     List<Scooter> list = new List<Scooter>();
     var json = await apiHelper
-        .getApi('scooters:nearby?lat=$latitude&lng=$longitude&r=10000');
-    for (var item in jsonDecode(json)) {
-      Scooter scotter = new Scooter(
-        code: item['code'],
-        model: item['model'],
-        battery: item['battery'],
-        remaining_mileage: item['remaining_mileage'],
-        latitude: item['coord']['lat'],
-        longitude: item['coord']['lng'],
-        preauth: item['fare']['preauth'],
-        per_minute: item['fare']['per_minute'],
-      );
-      list.add(scotter);
+        .getApi('scooters:nearby?lat=$latitude&lng=$longitude&r=100000');
+    if (json != null) {
+      for (var item in jsonDecode(json)) {
+        Scooter scotter = new Scooter(
+          code: item['code'],
+          model: item['model'],
+          battery: item['battery'],
+          remaining_mileage: item['remaining_mileage'],
+          latitude: item['coord']['lat'],
+          longitude: item['coord']['lng'],
+          preauth: item['fare']['preauth'],
+          per_minute: item['fare']['per_minute'],
+        );
+        list.add(scotter);
+      }
     }
+
     return list;
   }
 }
