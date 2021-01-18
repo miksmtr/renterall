@@ -35,16 +35,24 @@ class ApiHelper {
   }
 
   Future<dynamic> getApi(url) async {
-    Response response = await _handleResponse(await dio.get(baseUrl + url));
-    return response.data;
+    try {
+      Response response = await _handleResponse(await dio.get(baseUrl + url));
+      return response.data;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<dynamic> postApi(url, body) async {
-    Response response = await _handleResponse(await dio.post(
-      url,
-      data: body,
-    ));
-    return response.data;
+    try {
+      Response response = await _handleResponse(await dio.post(
+        url,
+        data: body,
+      ));
+      return response.data;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<Response> _handleResponse(Response response) async {

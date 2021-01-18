@@ -15,8 +15,12 @@ class PalmApi implements ApiInterface {
   Future<List<Scooter>> getScooters() async {
     List<Scooter> list = new List<Scooter>();
     var json = await apiHelper.getApi('scooter');
-    for (var item in json['scooters']) {
-      list.add(Scooter.fromJson(item));
+    if (json != null) {
+      if (json['scooters'].length > 0) {
+        for (var item in json['scooters']) {
+          list.add(Scooter.fromJson(item));
+        }
+      }
     }
     return list;
   }

@@ -20,8 +20,10 @@ class KediApi implements ApiInterface {
     var json = await apiHelper.postApi(
       'get-device-nearby',
     );
-    for (var item in json['data']) {
-      list.add(Scooter.fromJson(item));
+    if (json != null) {
+      for (var item in json['data']) {
+        list.add(Scooter.fromJson(item));
+      }
     }
     return list;
   }

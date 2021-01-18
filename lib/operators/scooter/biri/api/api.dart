@@ -13,11 +13,14 @@ class BiriApi implements ApiInterface {
   //await apiHelper.postApi(key, body: data.toJson());
   Future<List<Scooter>> getScooters() async {
     List<Scooter> list = new List<Scooter>();
-    var json = await apiHelper.postApi('scooter/getall',null);
+    var json = await apiHelper.postApi('scooter/getall', null);
 
-    print("json" + json.toString());
-    for (var item in json['data']) {
-      list.add(Scooter.fromJson(item));
+    if (json != null) {
+      if (json.length > 2) {
+        for (var item in json['data']) {
+          list.add(Scooter.fromJson(item));
+        }
+      }
     }
     return list;
   }

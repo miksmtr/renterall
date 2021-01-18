@@ -21,15 +21,16 @@ class MoovApi implements ApiInterface {
     var json = await apiHelper.postApi('search/',
         body:
             '''{\n  "is_active": true,\n  "pin_location": {\n    "lat": 41.0452472,\n    "lon": 29.0059014\n  },\n  "status": [\n    "active"\n  ],\n  "vehicle_types": [\n    "CAR"\n  ]\n}''');
-
-    if (json['hits'].length > 0) {
-      for (var item in json['hits']) {
-        Car car = new Car(
-            latitude: item['geom']['lat'],
-            longitude: item['geom']['lon'],
-            fuel_level_ratio: item['fuel_level_ratio'],
-            geo_distance: item['fuel_level_ratio']);
-        list.add(car);
+    if (json != null) {
+      if (json['hits'].length > 0) {
+        for (var item in json['hits']) {
+          Car car = new Car(
+              latitude: item['geom']['lat'],
+              longitude: item['geom']['lon'],
+              fuel_level_ratio: item['fuel_level_ratio'],
+              geo_distance: item['fuel_level_ratio']);
+          list.add(car);
+        }
       }
     }
 

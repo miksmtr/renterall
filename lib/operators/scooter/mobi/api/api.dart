@@ -18,8 +18,10 @@ class MobiApi implements ApiInterface {
   Future<List<Scooter>> getScooters() async {
     List<Scooter> list = new List<Scooter>();
     var json = await apiHelper.getApi('get-active-devices');
-    for (var item in jsonDecode(json)['data']) {
-      list.add(Scooter.fromJson(item));
+    if (json != null) {
+      for (var item in jsonDecode(json)['data']) {
+        list.add(Scooter.fromJson(item));
+      }
     }
     return list;
   }

@@ -18,28 +18,36 @@ class ApiHelper2 {
   }) {}
 
   Future<dynamic> getApi(url) async {
-    var request = http.Request('GET', Uri.parse(baseUrl + url));
-    request.bodyFields = {};
-    request.headers.addAll(headers);
-    http.StreamedResponse response = await request.send();
-    if (response.statusCode == 200) {
-      return await response.stream.bytesToString();
-    } else {
+    try {
+      var request = http.Request('GET', Uri.parse(baseUrl + url));
+      request.bodyFields = {};
+      request.headers.addAll(headers);
+      http.StreamedResponse response = await request.send();
+      if (response.statusCode == 200) {
+        return await response.stream.bytesToString();
+      } else {
+        return null;
+      }
+    } catch (e) {
       return null;
     }
   }
 
   Future<dynamic> postApi(url, {body}) async {
-    var request = http.Request('POST', Uri.parse(baseUrl + url));
-    if (body != null) request.body = body;
+    try {
+      var request = http.Request('POST', Uri.parse(baseUrl + url));
+      if (body != null) request.body = body;
 
-    request.headers.addAll(headers);
-    http.StreamedResponse response = await request.send();
+      request.headers.addAll(headers);
+      http.StreamedResponse response = await request.send();
 
-    String responseStream = await response.stream.bytesToString();
-    if (response.statusCode == 200) {
-      return jsonDecode(responseStream);
-    } else {
+      String responseStream = await response.stream.bytesToString();
+      if (response.statusCode == 200) {
+        return jsonDecode(responseStream);
+      } else {
+        return null;
+      }
+    } catch (e) {
       return null;
     }
   }

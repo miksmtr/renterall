@@ -26,13 +26,17 @@ class MartiApi implements ApiInterface {
     var json = await apiHelper.postApi('map/listAvailables',
         body:
             '''{"latitude":"$latitude","longitude":"$longitude","minPointLatitude":"$minPointLatitude","minPointLongitude":"$minPointLongitude","maxPointLatitude":"$maxPointLatitude","maxPointLongitude":"$maxPointLongitude","zoomLevel":"$zoomLevel"}''');
-    if (json['isSuccess']) {
-      if (json.length > 0) {
-        for (var item in json['data']) {
-          list.add(Scooter.fromJson(item));
+
+    if (json != null) {
+      if (json['isSuccess']) {
+        if (json.length > 0) {
+          for (var item in json['data']) {
+            list.add(Scooter.fromJson(item));
+          }
         }
       }
     }
+
     return list;
   }
 }

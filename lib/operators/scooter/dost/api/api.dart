@@ -2,26 +2,27 @@ import 'dart:convert';
 
 import 'package:renterall/models/interfaces/api_interface.dart';
 import '../model/scooter.dart';
-import 'package:renterall/utills/helpers/api_helper.dart';
+import 'package:renterall/utills/helpers/api_helper2.dart';
 import '../const.dart';
 
 class DostApi implements ApiInterface {
   String userToken;
-  ApiHelper apiHelper;
+  ApiHelper2 apiHelper;
   DostApi(this.userToken) {
-    apiHelper = new ApiHelper(baseUrl: apiUrl, token: "Bearer " + userToken);
+    apiHelper = new ApiHelper2(baseUrl: apiUrl, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + userToken,
+    });
   }
 
-  //await apiHelper.postApi(key, body: data.toJson());
   Future<List<Scooter>> getScooters(double lat, double let) async {
     List<Scooter> list = new List<Scooter>();
     var json = await apiHelper.getApi('scooter/$lat/$let');
-    if (json.length > 0) {
+    if (json != null) {
       for (var item in json['data']) {
         list.add(Scooter.fromJson(item));
       }
     }
-
     return list;
   }
 }

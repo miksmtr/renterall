@@ -53,6 +53,7 @@ flutter:
     - assets/operators/icons/
     - assets/operators/icons/scooter/
     - assets/operators/icons/car/
+    - assets/operators/icons/taksi/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
