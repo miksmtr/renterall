@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:http/http.dart';
 import 'package:location/location.dart';
 import 'package:renterall/general_const.dart';
 import 'package:renterall/models/interfaces/vehicle.dart';
@@ -43,15 +44,16 @@ class _MyHomePageState extends State<MapScreen> {
     mapController = MapController();
   }
 
+  bool isLoading = true;
   LatLng centerLocation;
   MapOptions mapOptions;
   MapController mapController;
   @override
   Widget build(BuildContext context) {
-    return lat != 0
-        ? Stack(
-            children: [
-              new FlutterMap(
+    return Stack(
+      children: [
+        _locationData != null
+            ? new FlutterMap(
                 mapController: mapController,
                 options: mapOptions,
                 layers: [
@@ -63,119 +65,74 @@ class _MyHomePageState extends State<MapScreen> {
                     markers: markerList,
                   ),
                 ],
+              )
+            : getLoadingWidget(),
+        Positioned(
+          bottom: 25,
+          right: 25,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                mapController.move(centerLocation, 17);
+              });
+            },
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                shape: BoxShape.circle,
               ),
-              Positioned(
-                  bottom: 25,
-                  right: 25,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        mapController.move(centerLocation, 17);
-                      });
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.gps_fixed_outlined,
-                        size: 35,
-                      ),
-                    ),
-                  )),
-              Container(
-                margin: EdgeInsets.all(25),
-                decoration: BoxDecoration(color: Colors.white),
-                child: IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      size: 35,
-                    ),
-                    onPressed: () async {
-                      print(6);
-                      await showMenu(
-                        context: context,
-                        position: RelativeRect.fromLTRB(100, 100, 100, 100),
-                        items: [
-                          PopupMenuItem(
-                            child: Text("add"),
-                          ),
-                          PopupMenuItem(
-                            child: Text("remove"),
-                          ),
-                        ],
-                        elevation: 8.0,
-                      );
-                    }),
+              child: Icon(
+                Icons.gps_fixed_outlined,
+                size: 35,
               ),
-              Positioned(
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 85,
+          right: 25,
+          child: GestureDetector(
+            onTap: () async {
+              await getApi();
+            },
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.refresh,
+                size: 30,
+              ),
+            ),
+          ),
+        ),
+        !isLoading
+            ? Positioned(
                 top: 25,
                 right: 0,
                 left: 0,
                 height: 50,
                 child: Image.asset("assets/logo/logo.png"),
               )
-            ],
-          )
-        : Container(
-            decoration: BoxDecoration(color: Colors.white),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-    ;
+            : getLoadingWidget()
+      ],
+    );
   }
 
   init() async {
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-    _locationData = await location.getLocation();
-    markerList.clear();
-
-    getApi();
-
-    setState(() {
-      centerLocation =
-          new LatLng(_locationData.latitude, _locationData.longitude);
-      mapOptions = new MapOptions(
-          center: LatLng(_locationData.latitude, _locationData.longitude),
-          zoom: 17,
-          maxZoom: 18,
-          minZoom: 16);
-      lat = _locationData.latitude;
-      long = _locationData.longitude;
-      markerList.add(
-        new Marker(
-          width: 70,
-          height: 70,
-          point: centerLocation,
-          builder: (ctx) => new Container(
-            child: Icon(
-              Icons.location_pin,
-              color: Colors.red,
-            ),
-          ),
-        ),
-      );
-    });
+    await getLocation();
+    await getApi();
   }
 
   getApi() async {
+    setState(() {
+      isLoading = true;
+    });
     DostApi dostApi = new DostApi(DOSTTOKEN);
     KediApi kediApi = new KediApi(KEDITOKEN);
     MartiApi martiApi = new MartiApi(MARTITOKEN);
@@ -185,6 +142,21 @@ class _MyHomePageState extends State<MapScreen> {
     MoovApi moovApi = new MoovApi(MOOVTOKEN);
     BiTaksiApi biTaksiApi = new BiTaksiApi(BITAKSITOKEN);
     ITaksiApi iTaksiApi = new ITaksiApi(ITAKSITOKEN);
+
+    markerList.clear();
+    markerList.add(
+      new Marker(
+        width: 70,
+        height: 70,
+        point: centerLocation,
+        builder: (ctx) => new Container(
+          child: Icon(
+            Icons.location_pin,
+            color: Colors.red,
+          ),
+        ),
+      ),
+    );
 
     try {
       getList(await iTaksiApi.getTaksi(lat, long), "taxi", "itaksi");
@@ -233,9 +205,13 @@ class _MyHomePageState extends State<MapScreen> {
     try {
       getList(await biTaksiApi.getTaksi(lat, long), "taxi", "bitaksi");
     } catch (e) {}
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  getList(list, type, company) async {
+  getList(list, type, company) {
     setState(() {
       print("$type : " + company);
 
@@ -296,5 +272,53 @@ class _MyHomePageState extends State<MapScreen> {
         );
       }
     });
+  }
+
+  getLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    var data = await location.getLocation();
+    setState(() {
+      _locationData = data;
+    });
+
+    setState(() {
+      centerLocation =
+          new LatLng(_locationData.latitude, _locationData.longitude);
+      mapOptions = new MapOptions(
+          center: LatLng(_locationData.latitude, _locationData.longitude),
+          zoom: 17,
+          maxZoom: 18,
+          minZoom: 16);
+      lat = _locationData.latitude;
+      long = _locationData.longitude;
+    });
+  }
+
+  Widget getLoadingWidget() {
+    return Positioned(
+      top: 0,
+      right: 0,
+      left: 0,
+      bottom: 0,
+      child: Container(
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
   }
 }
