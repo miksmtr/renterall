@@ -266,18 +266,8 @@ class _MyHomePageState extends State<MapScreen> {
                   double.parse(vehicleItem.longitude.toString())),
               builder: (ctx) => new GestureDetector(
                     onTap: () async {
-                      if (Platform.isIOS) {
-                        await LaunchApp.openApp(
-                          iosUrlScheme: 'pulsesecure://',
-                          appStoreLink:
-                              'itms-apps://itunes.apple.com/tr/app/pulse-secure/' +
-                                  operatorSub.domain.ios,
-                          // openStore: false
-                        );
-                      } else {
-                        await LaunchApp.openApp(
-                            androidPackageName: operatorSub.domain.android);
-                      }
+                      await openPopup(operatorSub);
+
                       // Enter thr pa
                     },
                     child: Container(
@@ -370,6 +360,115 @@ class _MyHomePageState extends State<MapScreen> {
           child: CircularProgressIndicator(),
         ),
       ),
+    );
+  }
+
+  openPopup(OperatorSub operatorSub) async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext bc) {
+        return Container(
+          padding: EdgeInsets.all(25),
+          decoration: BoxDecoration(
+              borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(40.0),
+                  topRight: const Radius.circular(40.0)),
+              color: Colors.white),
+          child: new Wrap(
+            children: <Widget>[
+              new ListTile(
+                leading: Container(
+                  width: 50,
+                  height: 50,
+                  child: Image.asset(
+                    "assets/icons/" + operatorSub.type + ".png",
+                    color: greenColor.withOpacity(0.7),
+                  ),
+                ),
+                title: Container(
+                  width: 35,
+                  height: 35,
+                  child: Image.asset(
+                    "assets/operators/icons/" +
+                        operatorSub.type +
+                        "/" +
+                        operatorSub.name +
+                        ".png",
+                  ),
+                ),
+                trailing: Container(
+                  width: 50,
+                  height: 50,
+                  child: new IconButton(
+                    icon: Icon(Icons.launch_sharp),
+                    iconSize: 30,
+                    color: greenColor,
+                    onPressed: () async {
+                      if (Platform.isIOS) {
+                        await LaunchApp.openApp(
+                          iosUrlScheme: 'pulsesecure://',
+                          appStoreLink:
+                              'itms-apps://itunes.apple.com/tr/app/pulse-secure/' +
+                                  operatorSub.domain.ios,
+                          // openStore: false
+                        );
+                      } else {
+                        await LaunchApp.openApp(
+                            androidPackageName: operatorSub.domain.android);
+                      }
+                    },
+                  ),
+                ),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.battery_alert,
+                          color: greenColor,
+                        ),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Text("86 %")
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.attach_money,
+                          color: greenColor,
+                        ),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Text("1.99 TL + 0.69 TL")
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.space_bar,
+                          color: greenColor,
+                        ),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Text("0.5 KM")
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
