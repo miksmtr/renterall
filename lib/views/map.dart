@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart';
 import 'package:location/location.dart';
+import 'package:renterall/database/firestore.dart';
 import 'package:renterall/general_const.dart';
+import 'package:renterall/models/interfaces/operator.dart';
 import 'package:renterall/models/interfaces/vehicle.dart';
 import 'package:renterall/operators/scooter/hop/api/api.dart';
 import 'package:renterall/operators/scooter/marti/api/api.dart';
@@ -20,7 +24,8 @@ import '../operators/scooter/dost/api/api.dart';
 import '../operators/scooter/kedi/api/api.dart';
 
 class MapScreen extends StatefulWidget {
-  //MapScreen({this.drawerKey});
+  List<Operator> operatorList = new List<Operator>();
+  MapScreen({this.operatorList});
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -35,6 +40,17 @@ class _MyHomePageState extends State<MapScreen> {
   List<Marker> markerList = new List<Marker>();
   double lat = 0.0;
   double long = 0.0;
+  DostApi dostApi;
+  KediApi kediApi;
+  MartiApi martiApi;
+  PalmApi palmApi;
+  MobiApi mobiApi;
+  HopApi hopApi;
+  MoovApi moovApi;
+  BiTaksiApi biTaksiApi;
+  ITaksiApi iTaksiApi;
+
+  List<Operator> operatorList = new List<Operator>();
 
   @override
   void initState() {
@@ -126,6 +142,8 @@ class _MyHomePageState extends State<MapScreen> {
 
   init() async {
     await getLocation();
+    FireStoreHelper fireStoreHelper = FireStoreHelper('operatorler');
+    operatorList = await fireStoreHelper.getAllData();
     await getApi();
   }
 
@@ -133,15 +151,6 @@ class _MyHomePageState extends State<MapScreen> {
     setState(() {
       isLoading = true;
     });
-    DostApi dostApi = new DostApi(DOSTTOKEN);
-    KediApi kediApi = new KediApi(KEDITOKEN);
-    MartiApi martiApi = new MartiApi(MARTITOKEN);
-    PalmApi palmApi = new PalmApi(PALMTOKEN);
-    MobiApi mobiApi = new MobiApi(MOBITOKEN);
-    HopApi hopApi = new HopApi(HOPTOKEN);
-    MoovApi moovApi = new MoovApi(MOOVTOKEN);
-    BiTaksiApi biTaksiApi = new BiTaksiApi(BITAKSITOKEN);
-    ITaksiApi iTaksiApi = new ITaksiApi(ITAKSITOKEN);
 
     markerList.clear();
     markerList.add(
@@ -157,118 +166,160 @@ class _MyHomePageState extends State<MapScreen> {
         ),
       ),
     );
+    for (Operator item in operatorList) {
+      if (item.name == 'dost') {
+        dostApi = new DostApi(item.operatorSub.token);
+        try {
+          getList(await dostApi.getScooters(lat, long), item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await iTaksiApi.getTaksi(lat, long), "taxi", "itaksi");
-    } catch (e) {}
+      if (item.name == 'marti') {
+        martiApi = new MartiApi(item.operatorSub.token);
+        try {
+          getList(
+              await martiApi.getScooters(
+                latitude: (lat).toString(),
+                longitude: (long).toString(),
+                minPointLatitude: (long + 1.0).toString(),
+                minPointLongitude: (long - 1.0).toString(),
+                maxPointLatitude: (long + 1.0).toString(),
+                maxPointLongitude: (long + 1.0).toString(),
+              ),
+              item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(
-        await martiApi.getScooters(
-          latitude: (lat).toString(),
-          longitude: (long).toString(),
-          minPointLatitude: (long + 1.0).toString(),
-          minPointLongitude: (long - 1.0).toString(),
-          maxPointLatitude: (long + 1.0).toString(),
-          maxPointLongitude: (long + 1.0).toString(),
-        ),
-        "scooter",
-        "marti",
-      );
-    } catch (e) {}
+      if (item.name == 'palm') {
+        palmApi = new PalmApi(item.operatorSub.token);
+        try {
+          getList(await palmApi.getScooters(), item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await dostApi.getScooters(lat, long), "scooter", "dost");
-    } catch (e) {}
+      if (item.name == 'mobi') {
+        mobiApi = new MobiApi(item.operatorSub.token);
+        try {
+          getList(await mobiApi.getScooters(), item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await kediApi.getScooters(), "scooter", "kedi");
-    } catch (e) {}
+      if (item.name == 'mobi') {
+        kediApi = new KediApi(item.operatorSub.token);
+        try {
+          getList(await kediApi.getScooters(), item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await palmApi.getScooters(), "scooter", "palm");
-    } catch (e) {}
+      if (item.name == 'hop') {
+        hopApi = new HopApi(item.operatorSub.token);
+        try {
+          getList(await hopApi.getScooters(lat.toString(), long.toString()),
+              item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await mobiApi.getScooters(), "scooter", "mobi");
-    } catch (e) {}
+      if (item.name == 'moov') {
+        moovApi = new MoovApi(item.operatorSub.token);
+        try {
+          getList(await moovApi.getCars(lat, long), item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await hopApi.getScooters(lat.toString(), long.toString()),
-          "scooter", "hop");
-    } catch (e) {}
+      if (item.name == 'moov') {
+        biTaksiApi = new BiTaksiApi(item.operatorSub.token);
+        try {
+          getList(await biTaksiApi.getTaksi(lat, long), item.operatorSub);
+        } catch (e) {}
+      }
 
-    try {
-      getList(await moovApi.getCars(lat, long), "car", "moov");
-    } catch (e) {}
-
-    try {
-      getList(await biTaksiApi.getTaksi(lat, long), "taxi", "bitaksi");
-    } catch (e) {}
+      if (item.name == 'moov') {
+        iTaksiApi = new ITaksiApi(item.operatorSub.token);
+        try {
+          getList(await iTaksiApi.getTaksi(lat, long), item.operatorSub);
+        } catch (e) {}
+      }
+    }
 
     setState(() {
       isLoading = false;
     });
   }
 
-  getList(list, type, company) {
+  getList(list, OperatorSub operatorSub) {
+    print(operatorSub.type.toString());
     setState(() {
-      print("$type : " + company);
-
       for (dynamic item in list) {
         Vehicle vehicleItem = Vehicle(
           latitude: item.latitude ?? item.latitude ?? null,
           longitude: item.longitude ?? item.latitude ?? null,
-          type: type ?? null,
-          company: company ?? null,
+          type: operatorSub.type ?? null,
+          company: operatorSub.name ?? null,
         );
         vehicleList.add(vehicleItem);
 
         markerList.add(
           new Marker(
-            width: 65,
-            height: 30,
-            point: LatLng(double.parse(vehicleItem.latitude.toString()),
-                double.parse(vehicleItem.longitude.toString())),
-            builder: (ctx) => new Container(
-                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: Colors.black.withOpacity(0.5), width: 1),
-                  color: Colors.white.withOpacity(0.8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 27,
-                      height: 27,
-                      child: Image.asset(
-                        "assets/operators/icons/" +
-                            vehicleItem.type +
-                            "/" +
-                            vehicleItem.company +
-                            ".png",
-                      ),
-                    ),
-                    Container(
-                        padding: EdgeInsets.symmetric(horizontal: 1),
-                        width: 1,
-                        height: 27,
+              width: 65,
+              height: 30,
+              point: LatLng(double.parse(vehicleItem.latitude.toString()),
+                  double.parse(vehicleItem.longitude.toString())),
+              builder: (ctx) => new GestureDetector(
+                    onTap: () async {
+                      if (Platform.isIOS) {
+                        await LaunchApp.openApp(
+                          iosUrlScheme: 'pulsesecure://',
+                          appStoreLink:
+                              'itms-apps://itunes.apple.com/tr/app/pulse-secure/' +
+                                  operatorSub.domain.ios,
+                          // openStore: false
+                        );
+                      } else {
+                        await LaunchApp.openApp(
+                            androidPackageName: operatorSub.domain.android);
+                      }
+                      // Enter thr pa
+                    },
+                    child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 3, vertical: 3),
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Colors.black.withOpacity(0.5), width: 1),
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 27,
+                              height: 27,
+                              child: Image.asset(
+                                "assets/operators/icons/" +
+                                    operatorSub.type +
+                                    "/" +
+                                    operatorSub.name +
+                                    ".png",
+                              ),
+                            ),
+                            Container(
+                                padding: EdgeInsets.symmetric(horizontal: 1),
+                                width: 1,
+                                height: 27,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                )),
+                            Container(
+                              width: 27,
+                              height: 27,
+                              child: Image.asset(
+                                "assets/icons/" + operatorSub.type + ".png",
+                              ),
+                            ),
+                          ],
                         )),
-                    Container(
-                      width: 27,
-                      height: 27,
-                      child: Image.asset(
-                        "assets/icons/" + type + ".png",
-                      ),
-                    ),
-                  ],
-                )),
-          ),
+                  )),
         );
       }
     });
