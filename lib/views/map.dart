@@ -133,7 +133,10 @@ class _MyHomePageState extends State<MapScreen> {
                 right: 0,
                 left: 0,
                 height: 50,
-                child: Image.asset("assets/logo/logo.png"),
+                child: Container(
+                  decoration: BoxDecoration(shape: BoxShape.circle),
+                  child: Image.asset("assets/logo/logo.jpg"),
+                ),
               )
             : getLoadingWidget()
       ],
@@ -204,7 +207,7 @@ class _MyHomePageState extends State<MapScreen> {
         } catch (e) {}
       }
 
-      if (item.name == 'mobi') {
+      if (item.name == 'kedi') {
         kediApi = new KediApi(item.operatorSub.token);
         try {
           getList(await kediApi.getScooters(), item.operatorSub);
@@ -226,14 +229,14 @@ class _MyHomePageState extends State<MapScreen> {
         } catch (e) {}
       }
 
-      if (item.name == 'moov') {
+      if (item.name == 'bitaksi') {
         biTaksiApi = new BiTaksiApi(item.operatorSub.token);
         try {
           getList(await biTaksiApi.getTaksi(lat, long), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'moov') {
+      if (item.name == 'itaksi') {
         iTaksiApi = new ITaksiApi(item.operatorSub.token);
         try {
           getList(await iTaksiApi.getTaksi(lat, long), item.operatorSub);
@@ -255,6 +258,10 @@ class _MyHomePageState extends State<MapScreen> {
           longitude: item.longitude ?? item.latitude ?? null,
           type: operatorSub.type ?? null,
           company: operatorSub.name ?? null,
+          distance: item.distance ?? null,
+          minPrice: item.minPrice ?? null,
+          startPrice: item.startPrice ?? null,
+          battery: item.battery ?? null,
         );
         vehicleList.add(vehicleItem);
 
@@ -266,7 +273,7 @@ class _MyHomePageState extends State<MapScreen> {
                   double.parse(vehicleItem.longitude.toString())),
               builder: (ctx) => new GestureDetector(
                     onTap: () async {
-                      await openPopup(operatorSub);
+                      await openPopup(vehicleItem, operatorSub);
 
                       // Enter thr pa
                     },
@@ -363,7 +370,7 @@ class _MyHomePageState extends State<MapScreen> {
     );
   }
 
-  openPopup(OperatorSub operatorSub) async {
+  openPopup(Vehicle vehicle, OperatorSub operatorSub) async {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -383,12 +390,12 @@ class _MyHomePageState extends State<MapScreen> {
                   height: 50,
                   child: Image.asset(
                     "assets/icons/" + operatorSub.type + ".png",
-                    color: greenColor.withOpacity(0.7),
+                    color: Colors.black.withOpacity(0.7),
                   ),
                 ),
                 title: Container(
-                  width: 35,
-                  height: 35,
+                  width: 25,
+                  height: 25,
                   child: Image.asset(
                     "assets/operators/icons/" +
                         operatorSub.type +
@@ -403,7 +410,7 @@ class _MyHomePageState extends State<MapScreen> {
                   child: new IconButton(
                     icon: Icon(Icons.launch_sharp),
                     iconSize: 30,
-                    color: greenColor,
+                    color: Colors.black.withOpacity(0.7),
                     onPressed: () async {
                       if (Platform.isIOS) {
                         await LaunchApp.openApp(
@@ -435,7 +442,7 @@ class _MyHomePageState extends State<MapScreen> {
                         SizedBox(
                           width: 3,
                         ),
-                        Text("86 %")
+                        Text(vehicle.battery.toString() + " %")
                       ],
                     ),
                     Row(
@@ -447,7 +454,10 @@ class _MyHomePageState extends State<MapScreen> {
                         SizedBox(
                           width: 3,
                         ),
-                        Text("1.99 TL + 0.69 TL")
+                        Text(vehicle.minPrice.toString() +
+                            " / " +
+                            vehicle.startPrice.toString() +
+                            " TL")
                       ],
                     ),
                     Row(
@@ -459,7 +469,7 @@ class _MyHomePageState extends State<MapScreen> {
                         SizedBox(
                           width: 3,
                         ),
-                        Text("0.5 KM")
+                        Text((vehicle.distance / 1000).toString() + " KM")
                       ],
                     )
                   ],

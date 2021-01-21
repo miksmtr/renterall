@@ -37,6 +37,7 @@ class ApiHelper {
   Future<dynamic> getApi(url) async {
     try {
       Response response = await _handleResponse(await dio.get(baseUrl + url));
+
       return response.data;
     } catch (e) {
       return null;

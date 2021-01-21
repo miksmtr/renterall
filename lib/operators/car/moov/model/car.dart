@@ -3,23 +3,29 @@ import 'dart:io';
 import 'package:renterall/models/interfaces/model_interfac.dart';
 
 class Car implements ModelInterface {
-  dynamic fuel_level_ratio;
-  dynamic geo_distance;
+  dynamic battery;
+  dynamic distance;
   dynamic latitude;
   dynamic longitude;
+  dynamic minPrice;
+  dynamic startPrice;
 
   Car(
-      {this.fuel_level_ratio,
+      {this.battery,
       this.latitude,
+      this.minPrice,
+      this.startPrice,
       this.longitude,
-      this.geo_distance});
+      this.distance});
 
   factory Car.fromJson(Map json) {
     return Car(
-      fuel_level_ratio: json['fuel_level_ratio'] ?? null,
+      startPrice: json['startPrice'] ?? null,
+      minPrice: json['minPrice'] ?? null,
+      battery: json['battery'] ?? null,
       latitude: json['latitude'] ?? null,
       longitude: json['longitude'] ?? null,
-      geo_distance: json['geo_distance'] ?? null,
+      distance: json['distance'] ?? null,
     );
   }
 }

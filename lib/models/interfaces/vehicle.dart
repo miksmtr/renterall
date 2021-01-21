@@ -12,15 +12,18 @@ class Vehicle implements ModelInterface {
   dynamic longitude;
 
   dynamic duration;
-  dynamic price;
+  dynamic startPrice;
+  dynamic minPrice;
   dynamic status;
+
   Vehicle(
       {this.battery,
       this.distance,
       this.duration,
       this.latitude,
       this.longitude,
-      this.price,
+      this.minPrice,
+      this.startPrice,
       this.status,
       this.company,
       this.type});
@@ -32,7 +35,8 @@ class Vehicle implements ModelInterface {
       duration: json['duration'] ?? null,
       latitude: json['latitude'] ?? null,
       longitude: json['longitude'] ?? null,
-      price: json['price'] ?? null,
+      minPrice: json['minPrice'] ?? null,
+      startPrice: json['startPrice'] ?? null,
       status: json['status'] ?? null,
       company: json['company'] ?? null,
       type: json['type'] ?? null,

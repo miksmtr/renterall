@@ -25,10 +25,13 @@ class MoovApi implements ApiInterface {
       if (json['hits'].length > 0) {
         for (var item in json['hits']) {
           Car car = new Car(
-              latitude: item['geom']['lat'],
-              longitude: item['geom']['lon'],
-              fuel_level_ratio: item['fuel_level_ratio'],
-              geo_distance: item['fuel_level_ratio']);
+            latitude: item['geom']['lat'],
+            longitude: item['geom']['lon'],
+            battery: item['fuel_level_ratio'],
+            distance: item['geo_distance'],
+            minPrice: item['min_price'],
+            startPrice: item['daily_price'],
+          );
           list.add(car);
         }
       }
