@@ -1,16 +1,17 @@
 # renterall
 
-A new Flutter project.
+Yakınınızdaki scooter, taxi ve kiralık arabaları bulun.
 
-## Getting Started
+[APK DOWNLOAD](https://github.com/mrbulut/renterall/blob/main/assets/preview/app-release.apk?raw=true)
 
-This project is a starting point for a Flutter application.
+![Alt Text](https://github.com/mrbulut/renterall/blob/main/assets/preview/1.PNG?raw=true)
+![Alt Text](https://github.com/mrbulut/renterall/blob/main/assets/preview/2.PNG?raw=true)
+![Alt Text](https://github.com/mrbulut/renterall/blob/main/assets/preview/3.PNG?raw=true)
+![Alt Text](https://github.com/mrbulut/renterall/blob/main/assets/preview/4.PNG?raw=true)
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## NOT
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Uygulama test amaçlı geliştirilmiştir. 
+
+
