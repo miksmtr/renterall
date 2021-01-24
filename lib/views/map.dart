@@ -127,18 +127,7 @@ class _MyHomePageState extends State<MapScreen> {
             ),
           ),
         ),
-        !isLoading
-            ? Positioned(
-                top: 25,
-                right: 0,
-                left: 0,
-                height: 50,
-                child: Container(
-                  decoration: BoxDecoration(shape: BoxShape.circle),
-                  child: Image.asset("assets/logo/logo.jpg"),
-                ),
-              )
-            : getLoadingWidget()
+        !isLoading ? Container() : getLoadingWidget()
       ],
     );
   }
@@ -170,14 +159,14 @@ class _MyHomePageState extends State<MapScreen> {
       ),
     );
     for (Operator item in operatorList) {
-      if (item.name == 'dost') {
+      if (item.name == 'dost' && item.isActive) {
         dostApi = new DostApi(item.operatorSub.token);
         try {
           getList(await dostApi.getScooters(lat, long), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'marti') {
+      if (item.name == 'marti' && item.isActive) {
         martiApi = new MartiApi(item.operatorSub.token);
         try {
           getList(
@@ -193,28 +182,28 @@ class _MyHomePageState extends State<MapScreen> {
         } catch (e) {}
       }
 
-      if (item.name == 'palm') {
+      if (item.name == 'palm' && item.isActive) {
         palmApi = new PalmApi(item.operatorSub.token);
         try {
           getList(await palmApi.getScooters(), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'mobi') {
+      if (item.name == 'mobi' && item.isActive) {
         mobiApi = new MobiApi(item.operatorSub.token);
         try {
           getList(await mobiApi.getScooters(), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'kedi') {
+      if (item.name == 'kedi' && item.isActive) {
         kediApi = new KediApi(item.operatorSub.token);
         try {
           getList(await kediApi.getScooters(), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'hop') {
+      if (item.name == 'hop' && item.isActive) {
         hopApi = new HopApi(item.operatorSub.token);
         try {
           getList(await hopApi.getScooters(lat.toString(), long.toString()),
@@ -222,21 +211,21 @@ class _MyHomePageState extends State<MapScreen> {
         } catch (e) {}
       }
 
-      if (item.name == 'moov') {
+      if (item.name == 'moov' && item.isActive) {
         moovApi = new MoovApi(item.operatorSub.token);
         try {
           getList(await moovApi.getCars(lat, long), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'bitaksi') {
+      if (item.name == 'bitaksi' && item.isActive) {
         biTaksiApi = new BiTaksiApi(item.operatorSub.token);
         try {
           getList(await biTaksiApi.getTaksi(lat, long), item.operatorSub);
         } catch (e) {}
       }
 
-      if (item.name == 'itaksi') {
+      if (item.name == 'itaksi' && item.isActive) {
         iTaksiApi = new ITaksiApi(item.operatorSub.token);
         try {
           getList(await iTaksiApi.getTaksi(lat, long), item.operatorSub);
@@ -253,16 +242,27 @@ class _MyHomePageState extends State<MapScreen> {
     print(operatorSub.type.toString());
     setState(() {
       for (dynamic item in list) {
-        Vehicle vehicleItem = Vehicle(
-          latitude: item.latitude ?? item.latitude ?? null,
-          longitude: item.longitude ?? item.latitude ?? null,
-          type: operatorSub.type ?? null,
-          company: operatorSub.name ?? null,
-          distance: item.distance ?? null,
-          minPrice: item.minPrice ?? null,
-          startPrice: item.startPrice ?? null,
-          battery: item.battery ?? null,
-        );
+        Vehicle vehicleItem;
+        if (operatorSub.type != 'taxix') {
+          vehicleItem = Vehicle(
+            latitude: item.latitude ?? item.latitude ?? null,
+            longitude: item.longitude ?? item.latitude ?? null,
+            type: operatorSub.type ?? null,
+            company: operatorSub.name ?? null,
+            distance: item.distance ?? null,
+            minPrice: item.minPrice ?? null,
+            startPrice: item.startPrice ?? null,
+            battery: item.battery ?? null,
+          );
+        } else {
+          vehicleItem = Vehicle(
+            latitude: item.latitude ?? item.latitude ?? null,
+            longitude: item.longitude ?? item.latitude ?? null,
+            type: operatorSub.type ?? null,
+            company: operatorSub.name ?? null,
+          );
+        }
+
         vehicleList.add(vehicleItem);
 
         markerList.add(
@@ -429,56 +429,64 @@ class _MyHomePageState extends State<MapScreen> {
                 ),
                 onTap: () => Navigator.pop(context),
               ),
-              ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.battery_alert,
-                          color: greenColor,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(vehicle.battery.toString() + " %")
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.attach_money,
-                          color: greenColor,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(vehicle.minPrice.toString() +
-                            " / " +
-                            vehicle.startPrice.toString() +
-                            " TL")
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.space_bar,
-                          color: greenColor,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text((vehicle.distance / 1000).toString() + " KM")
-                      ],
+              operatorSub.type != 'taxix'
+                  ? ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.battery_alert,
+                                color: greenColor,
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(format(vehicle.battery).toString() + " %")
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.attach_money,
+                                color: greenColor,
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(vehicle.minPrice.toString() +
+                                  " / " +
+                                  vehicle.startPrice.toString() +
+                                  " TL")
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.space_bar,
+                                color: greenColor,
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                  format((vehicle.distance / 1000)).toString() +
+                                      " KM")
+                            ],
+                          )
+                        ],
+                      ),
                     )
-                  ],
-                ),
-              )
+                  : Container()
             ],
           ),
         );
       },
     );
+  }
+
+  String format(double n) {
+    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
   }
 }

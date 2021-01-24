@@ -30,8 +30,13 @@ class FireStoreHelper {
         ios = null;
         android = null;
         operatorDomain = null;
+        bool isActive = false;
+
         if (v != null) {
           v.forEach((key, val) {
+            if (key == 'isActive') {
+              isActive = v['isActive'];
+            }
             if (key == 'domain') {
               if (v['domain'] != null) {
                 ios = v['domain']['ios'];
@@ -43,6 +48,7 @@ class FireStoreHelper {
             }
           });
         }
+
         operatorSub = null;
         operatorSub = new OperatorSub(
           name: k.toString(),
@@ -50,8 +56,8 @@ class FireStoreHelper {
           domain: operatorDomain,
           type: data.id.toString(),
         );
-        operatorVal =
-            new Operator(name: k.toString(), operatorSub: operatorSub);
+        operatorVal = new Operator(
+            name: k.toString(), operatorSub: operatorSub, isActive: isActive);
 
         operatorList.add(operatorVal);
       });

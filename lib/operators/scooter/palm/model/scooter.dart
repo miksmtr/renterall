@@ -1,4 +1,3 @@
-
 import 'package:renterall/models/interfaces/model_interfac.dart';
 
 class Scooter implements ModelInterface {
@@ -10,7 +9,8 @@ class Scooter implements ModelInterface {
   dynamic latitude;
   dynamic lockBleCode;
   dynamic longitude;
-  dynamic price;
+  dynamic startPrice;
+  dynamic minPrice;
   dynamic qrcode;
   dynamic region;
   dynamic scooterCode;
@@ -34,6 +34,8 @@ class Scooter implements ModelInterface {
   Scooter(
       {this.affectedRows,
       this.amount,
+      this.minPrice,
+      this.startPrice,
       this.battery,
       this.campaignId,
       this.changedRows,
@@ -52,7 +54,6 @@ class Scooter implements ModelInterface {
       this.lockBleCode,
       this.longitude,
       this.photo,
-      this.price,
       this.protocol41,
       this.qrcode,
       this.region,
@@ -72,7 +73,8 @@ class Scooter implements ModelInterface {
       latitude: json['latitude'] ?? null,
       lockBleCode: json['lockBleCode'] ?? null,
       longitude: json['longitude'] ?? null,
-      price: json['price'] ?? null,
+      minPrice: json['price'] ?? null,
+      startPrice: json['price'] ?? null,
       qrcode: json['qrcode'] ?? null,
       region: json['region'] ?? null,
       scooterCode: json['scooterCode'] ?? null,

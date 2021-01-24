@@ -45,6 +45,7 @@ class ITaksiApi implements ApiInterface {
         body:
             '''{\n  "limit": 100,\n  "kinds": [\n    "$taxiType-taxi"\n  ],\n  "radius": 5000,\n  "coord": {\n    "Lng": $let,\n    "Lat": $lat\n  }\n}''');
 
+
     if (json != null) {
       if (json['coords'].length > 0) {
         for (var item in json['coords']) {

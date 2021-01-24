@@ -9,34 +9,35 @@ class Scooter implements ModelInterface {
   dynamic model;
   dynamic battery;
 
+  dynamic startPrice;
+  dynamic minPrice;
 
-  dynamic tripTime;
-  dynamic tripDistance;
+  dynamic distance;
   dynamic active;
 
   Scooter({
     this.battery,
     this.qrCode,
-    this.tripDistance,
+    this.distance,
     this.active,
+    this.minPrice,
+    this.startPrice,
     this.latitude,
     this.longitude,
     this.model,
-    this.tripTime,
   });
 
   factory Scooter.fromJson(Map json) {
     return Scooter(
-        latitude: json['latitude'] ?? null,
+      latitude: json['latitude'] ?? null,
       longitude: json['longitude'] ?? null,
       battery: json['battery'] ?? null,
       qrCode: json['qrCode'] ?? nullptr,
-
-
-      tripDistance: json['tripDistance'] ?? null,
+      distance: json['tripDistance'] ?? null,
       active: json['active'] ?? null,
       model: json['model'] ?? null,
-      tripTime: json['tripTime'] ?? null,
+      minPrice: 0,
+      startPrice: 0,
     );
   }
 }

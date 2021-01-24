@@ -20,6 +20,12 @@ version: 1.0.0+1
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
+flutter_icons:
+  image_path_android: "assets/logo/logo.png"
+  image_path_ios: "assets/logo/logo.png"
+  android: true
+  ios: "AppIcon"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -28,7 +34,7 @@ dependencies:
   flutter_map: ^0.10.1+1
   location: ^3.2.1
   simple_tooltip: ^0.1.16
-
+  flutter_launcher_icons: "^0.8.1"
   external_app_launcher: ^0.0.1
   android_intent: ^0.3.7+7
 

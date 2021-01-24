@@ -4,9 +4,11 @@ import 'package:renterall/models/interfaces/model_interfac.dart';
 
 class Operator {
   String name;
+  bool isActive;
   OperatorSub operatorSub;
 
   Operator({
+    this.isActive = false,
     this.operatorSub,
     this.name,
   });

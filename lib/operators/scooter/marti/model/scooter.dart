@@ -4,11 +4,11 @@ class Scooter implements ModelInterface {
   dynamic code;
   dynamic latitude;
   dynamic longitude;
-  dynamic batteryPercentage;
+  dynamic battery;
   dynamic statusId;
   dynamic lastUpdateTime;
-  dynamic startingPrice;
-  dynamic unitPrice;
+  dynamic startPrice;
+  dynamic minPrice;
   dynamic startingPriceWithoutDiscount;
   dynamic distance;
   dynamic reservable;
@@ -17,7 +17,7 @@ class Scooter implements ModelInterface {
   dynamic incentivizeAmount;
   Scooter(
       {this.distance,
-      this.batteryPercentage,
+      this.battery,
       this.code,
       this.incentivizeAmount,
       this.isIncentivized,
@@ -25,16 +25,16 @@ class Scooter implements ModelInterface {
       this.latitude,
       this.longitude,
       this.reservable,
-      this.startingPrice,
+      this.minPrice,
       this.startingPriceWithoutDiscount,
       this.statusId,
-      this.unitPrice,
+      this.startPrice,
       this.vehicleType});
 
   factory Scooter.fromJson(Map json) {
     return Scooter(
       distance: json['distance'] ?? null,
-      batteryPercentage: json['batteryPercentage'] ?? null,
+      battery: json['batteryPercentage'] ?? null,
       code: json['code'] ?? null,
       incentivizeAmount: json['incentivizeAmount'] ?? null,
       isIncentivized: json['isIncentivized'] ?? null,
@@ -42,11 +42,11 @@ class Scooter implements ModelInterface {
       latitude: json['latitude'] ?? null,
       longitude: json['longitude'] ?? null,
       reservable: json['reservable'] ?? null,
-      startingPrice: json['startingPrice'] ?? null,
+      startPrice: json['startingPrice'] ?? null,
       startingPriceWithoutDiscount:
           json['startingPriceWithoutDiscount'] ?? null,
       statusId: json['statusId'] ?? null,
-      unitPrice: json['unitPrice'] ?? null,
+      minPrice: json['unitPrice'] ?? null,
       vehicleType: json['vehicleType'] ?? null,
     );
   }
